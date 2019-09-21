@@ -6,7 +6,12 @@ This document contains instructions that were applied to deploy Flask applicatio
 
 For this project Amazon Lightsail has been recommended. Unfortunately, Amazon Lightsail requires credit/debt card number even for free tier. Amazon does not accept Maestro cards at all, and since I do not have another card I decided to use VPS from DigitalOcean with Ubuntu 18.04.
 
-### Summary of Server Configurations made
+### Summary of software installed
+
+- Git
+- Docker
+
+### Summary of Configurations Made
 
 #### Initial Configuration
 
@@ -16,9 +21,9 @@ For this project Amazon Lightsail has been recommended. Unfortunately, Amazon Li
 1. The login command from step 2 does not work anymore, now you must log in with the following comand: `shh root@165.22.94.80 -p 2200`
 
 
- #### Upgrade packages
+#### Upgrade packages
 
-One of the requirements to finish this project is that the installed packages need to be up to date. We do so with the following commands: `sudo apt-get update && sudo apt-get upgrade`
+One of the requirements to finish this project is that the installed packages need to be up to date. We do so with the following commands: `sudo apt-get update && sudo apt-get upgrade`. Also check if timezone is UTC, if not change it to UTC.
 
 
 #### Create Grader with sudo permissions
@@ -46,14 +51,14 @@ Ubuntu provides preinstalled firewall `ufw`. To configure it follow this steps:
 
 #### Setup SSH for grader and dissable SSH for root
 
-1. Create new pair of keys that will be used for grader, you can use ssh-keygen on your local machine
-1. Log in into VPS server and switch account to grader
-1. In /home/grader create .ssh folder
-1. In /home/grader/authorized_keys paste generated public key from step 1
-1. In your local machine copy private key to your .ssh directory
-1. Open /etc/ssh/sshd_config and check if `PasswordAuthentification`is equal to `no` and `PermitRootLogin` is also equal to no. This ensure that you cannot log as a root remotely and you must use ssh
-1. sudo service ssh restart
-1. Now you can login as a grader via ssh:
+1.  Create new pair of keys that will be used for grader, you can use ssh-keygen on your local machine
+1.  Log in into VPS server and switch account to grader
+1.  In /home/grader create .ssh folder
+1.  In /home/grader/authorized_keys paste generated public key from step 1
+1.  In your local machine copy private key <keyname> to your .ssh directory
+1.  On VPS server open /etc/ssh/sshd_config and check if `PasswordAuthentification`is equal to `no` and `PermitRootLogin` is also equal to no. This ensure that you cannot log as a root remotely and you must use ssh
+1.  sudo service ssh restart
+1.  Now you can login as a grader via ssh:
 
         ssh -i ~/.ssh/<keyname> -p 2200 grader@165.22.94.80
 Note that `ssh -p 2200 root@165.22.94.80` does not work anymore, says root@165.22.94.80: Permission denied (publickey).
