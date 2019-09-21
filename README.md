@@ -18,10 +18,7 @@ For this project Amazon Lightsail has been recommended. Unfortunately, Amazon Li
 
  #### Upgrade packages
 
-One of the requirements to finish this project is that the installed packages need to be up to date. We do so with the following commands:
-
-      sudo apt-get update
-      sudo apt-get upgrade
+One of the requirements to finish this project is that the installed packages need to be up to date. We do so with the following commands: `sudo apt-get update && sudo apt-get upgrade`
 
 
 #### Create Grader with sudo permissions
@@ -30,7 +27,7 @@ One of the requirements to finish this project is that the installed packages ne
 1.  Enter password for grader, I used: ovvidowa
 1.  Run `sudo visudo`
 1.  Add there the following line: `grader  ALL=(ALL:ALL) ALL`
-1.  Now you can log as grader with the command: `su - grader`
+1.  Now you can switch from root to grader with the following command: `su - grader`
 
 
 #### Firewall Configuration
@@ -46,3 +43,17 @@ Ubuntu provides preinstalled firewall `ufw`. To configure it follow this steps:
 1.  Allow NTP: `sudo ufw allow 123/udp`
 1.  Denny port 22: `sudo ufw deny 22`
 1.  Chcek status: `sudo ufw status`
+
+#### Setup SSH for grader and dissable SSH for root
+
+1. Create new pair of keys that will be used for grader, you can use ssh-keygen on your local machine
+1. Log in into VPS server and switch account to grader
+1. In /home/grader create .ssh folder
+1. In /home/grader/authorized_keys paste generated public key from step 1
+1. In your local machine copy private key to your .ssh directory
+1. Open /etc/ssh/sshd_config and check if `PasswordAuthentification`is equal to `no` and `PermitRootLogin` is also equal to no. This ensure that you cannot log as a root remotely and you must use ssh
+1. sudo service ssh restart
+1. Now you can login as a grader via ssh:
+
+        ssh -i ~/.ssh/<keyname> -p 2200 grader@165.22.94.80
+Note that `ssh -p 2200 root@165.22.94.80` does not work anymore, says root@165.22.94.80: Permission denied (publickey).
