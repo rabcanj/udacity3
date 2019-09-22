@@ -1,6 +1,8 @@
 # Linux Server Configuration
 
-This document contains instructions that were applied to deploy Flask application from the previous project.
+This document contains instructions that were applied to deploy Flask application from the previous project. In the bottom you can find rubics table summary where I summarized how I did specific tasks for this project.
+
+File grader_key, which is also in this repo is a private key to login via ssh.
 
 ## Server
 
@@ -119,7 +121,7 @@ As a WSGI server I decided to use Gunicorn. To be able to use gunicorn follow th
           application.run()
 1. Create new file `runserver_wsgi.sh` and paste there the following content:
 
-        gunicorn --bind 'unix:/home/grader/udacity2/catalog.sock' wsgi:application
+        gunicorn --bind 'unix:/home/grader/udacity2/catalog.sock' wsgi:application --deamon
 
 #### Nginx
 
