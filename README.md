@@ -2,7 +2,7 @@
 
 This document contains instructions that were applied to deploy Flask application from the previous project. In the bottom you can find rubics table summary where I summarized how I did specific tasks for this project.
 
-File grader_key, which is also in this repo is a private key to login via ssh.
+Grader ssh keys are located in grader-ssh directory. File grader_key, which is a private key to login via ssh.
 
 ## Server
 
