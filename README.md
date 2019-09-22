@@ -6,10 +6,22 @@ This document contains instructions that were applied to deploy Flask applicatio
 
 For this project Amazon Lightsail has been recommended. Unfortunately, Amazon Lightsail requires credit/debt card number even for free tier. Amazon does not accept Maestro cards at all, and since I do not have another card I decided to use VPS from DigitalOcean with Ubuntu 18.04.
 
+### Server details:
+- IP Adress: 165.22.94.80
+- URL: https://165.22.94.80.xip.io/
+
 ### Summary of software installed
 
 - Git
-- Docker
+- Nginx
+- Virtualenv
+    - Gunicorn
+    - Flask
+    - sqlalchemy
+    - Jinja2
+    - flask_oauthlib
+    - psycopg2-binary
+- Postgres
 
 ### Summary of Configurations Made
 
@@ -49,7 +61,7 @@ Ubuntu provides preinstalled firewall `ufw`. To configure it follow this steps:
 1.  Denny port 22: `sudo ufw deny 22`
 1.  Chcek status: `sudo ufw status`
 
-#### Setup SSH for grader and dissable SSH for root
+#### Setup SSH for grader and disable SSH for root
 
 1.  Create new pair of keys that will be used for grader, you can use ssh-keygen on your local machine
 1.  Log in into VPS server and switch account to grader
@@ -72,6 +84,26 @@ Note that `ssh -p 2200 root@165.22.94.80` does not work anymore, says root@165.2
 
 #### Postgres
 
+The previous project was using sqllite, we need to change to postgresql. Change database engine to (in file controlers.py and database.py): `db_engine='postgresql://catalog:ovviodwa@localhost/catalog`
+
+  ##### Install Postgres
+
+  1.  Install Postgres: `sudo apt-get install postgresql`
+  1.  run: `psql`
+  1.  run: `CREATE ROLE catalog WITH LOGIN;`
+  1.  run: `ALTER ROLE catalog CREATEDB;`
+  1.  run: `\password catalog` -> ovviodwa
+  1.  run: `\q`
+  1.  run: `exit`
+
+
+  ##### Create new database and user called Catalog
+  1.  run: `sudo add user catalog`
+  1.  run: `sudo visudo`
+  1.  Add line `catalog ALL=(ALL:ALL) ALL`
+  1.  Run: `sudo su - catalog`
+  1.  run: `createdb catalog`
+  1.  Run: `exit`
 
 
 #### Gunicorn
@@ -111,3 +143,42 @@ As a web server I decided to use Nginx. To configure nginx follow the next steps
 1. Create new link to the sites-enabled: `sudo ln -s /etc/nginx/sites-available/catalog /etc/nginx/sites-enabled`
 1. We do not need to serve default nginx app, so remove it: `cd /etc/nginx/sites-enabled && rm default`
 1. Start the application: `source /home/grade/udacity2/runserver_wsgi.sh `
+
+### Conclusion
+
+In this project I configured web server where a simple web app is running. Insetad of port 80 the port 443 was used, because facebook login does not work with 80.
+
+| Criteria   |            |
+|----------|:-------------:|
+|Can you log into the server as the user grader using the submitted key? | ssh -i ~/.ssh/grader_key -p 2200 grader@165.22.94.80 |
+| Is remote login of the root user disabled? |   root login disabled in /etc/ssh/sshd_config   |  
+| Is the grader user given sudo access? | sudo visudo, added line grader  ALL=(ALL:ALL) ALL |  
+| Is the firewall configured to only allow for SSH, HTTP, and NTP? | firewall allwos SSH on 2200, HTTPS(443), NTP(123), server runs on https, so http was not allowed|  
+| Are users required to authenticate using RSA keys?| password login disabled in /etc/ssh/sshd_config |  
+| Are the applications up-to-date? | sudo apt-get update && sudo apt-get upgrade |
+| Is SSH hosted on non-default port? | tcp/2200 |
+| Is there a web server running on port 80? | webserver is running on 443 because instead of http I used https |
+| Has the database server been configured to properly serve data? | As a database server postgresql is used (see section about postresql) |
+| Has the web server been configured to serve the Item Catalog application? | Item Catalog application is served by Gunicorn (wsgi) and Nginx |
+| Is a README file included in the GitHub repo containing all specified information? | I believe yes |
+
+
+### List of third party resources
+
+1.  https://www.digitalocean.com/community/tutorials/how-to-serve-flask-applications-with-uswgi-and-nginx-on-ubuntu-18-04
+
+1.  https://www.digitalocean.com/community/tutorials/how-to-set-up-a-firewall-with-ufw-on-ubuntu-18-04
+
+1.  http://docs.gunicorn.org/en/stable/deploy.html
+
+1.  https://www.digitalocean.com/community/tutorials/how-to-install-and-use-postgresql-on-ubuntu-18-04
+
+1.  https://www.ssh.com/ssh/keygen/
+
+1.  https://vitux.com/add-and-manage-user-accounts-in-ubuntu-18-04-lts/
+
+1.  https://developers.facebook.com/blog/post/v2/2017/12/18/strict-uri-matching/
+
+1.  https://stackoverflow.com/questions/37001004/facebook-login-message-url-blocked-this-redirect-failed-because-the-redirect
+
+1.  https://pythonhosted.org/Flask-Social/
