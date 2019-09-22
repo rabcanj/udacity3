@@ -62,3 +62,52 @@ Ubuntu provides preinstalled firewall `ufw`. To configure it follow this steps:
 
         ssh -i ~/.ssh/<keyname> -p 2200 grader@165.22.94.80
 Note that `ssh -p 2200 root@165.22.94.80` does not work anymore, says root@165.22.94.80: Permission denied (publickey).
+
+
+#### Git
+
+1. Install Git: `sudo apt-get install git`
+1. Setup git emial, username
+1. Clone catalog app 'git clone https://github.com/rabcanj/udacity2.git'
+
+#### Postgres
+
+
+
+#### Gunicorn
+
+As a WSGI server I decided to use Gunicorn. To be able to use gunicorn follow this steps:
+1.  Open project Item Catalog and add to the requirements.txt Gunicorn.
+1.  Create new file `wsgi.py` and paste there following content
+
+        from app import app as application
+        from project import controlers, models, fboauth, database
+
+        if __name__ == "__main__":
+          application.run()
+1. Create new file `runserver_wsgi.sh` and paste there the following content:
+
+        gunicorn --bind 'unix:/home/grader/udacity2/catalog.sock' wsgi:application
+
+#### Nginx
+
+As a web server I decided to use Nginx. To configure nginx follow the next steps:
+
+1.  Install Nginx: `sudo apt-get install nginx`
+1.  `cd /etc/nginx/sites-available`
+1.  Create new file `catalog`
+1.  Paste the following content to the catalog:
+
+        server {
+          listen 443 ssl;
+          ssl_certificate     /home/grader/udacity2/dev.crt;
+          ssl_certificate_key /home/grader/udacity2/dev.key;
+
+          location / {
+              include proxy_params;
+              proxy_pass http://unix:/home/grader/udacity2/somename.sock;
+          }
+        }
+1. Create new link to the sites-enabled: `sudo ln -s /etc/nginx/sites-available/catalog /etc/nginx/sites-enabled`
+1. We do not need to serve default nginx app, so remove it: `cd /etc/nginx/sites-enabled && rm default`
+1. Start the application: `source /home/grade/udacity2/runserver_wsgi.sh `
