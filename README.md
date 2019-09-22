@@ -10,7 +10,7 @@ For this project Amazon Lightsail has been recommended. Unfortunately, Amazon Li
 
 ### Server details:
 - IP Adress: 165.22.94.80
-- URL: [https://165.22.94.80.xip.io/]()
+- URL: [https://165.22.94.80.xip.io/](#)
 
 ### Summary of software installed
 
