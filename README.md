@@ -43,7 +43,7 @@ One of the requirements to finish this project is that the installed packages ne
 #### Create Grader with sudo permissions
 
 1.  Run `sudo add user grader`
-1.  Enter password for grader, I used: ovvidowa
+1.  Enter password for grader, I used: ovviodwa
 1.  Run `sudo visudo`
 1.  Add there the following line: `grader  ALL=(ALL:ALL) ALL`
 1.  Now you can switch from root to grader with the following command: `su - grader`
